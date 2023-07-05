@@ -1,0 +1,30 @@
+steps:
+  # Build the container image
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "-t",
+        "europe-west1-docker.pkg.dev/iantarry3/docker-donkey-repo/hello",
+        ".",
+      ]
+  # Push the container image to Container Registry
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      ["push", "europe-west1-docker.pkg.dev/iantarry3/docker-donkey-repo/hello"]
+  # Deploy container image to Cloud Run
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      [
+        "run",
+        "deploy",
+        "hello-service",
+        "--image",
+        "europe-west1-docker.pkg.dev/iantarry3/docker-donkey-repo/hello",
+        "--region",
+        "europe-west1",
+        "--allow-unauthenticated",
+      ]
+images:
+  - europe-west1-docker.pkg.dev/iantarry3/docker-donkey-repo/hello
